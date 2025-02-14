@@ -1,0 +1,77 @@
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Function to read an image 
+def read_image(image_name):
+    image = cv2.imread(image_name)  
+    if image is None:
+        print("Error: Image not found.")
+    else:
+        RGBimage = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # Convert BGR to RGB
+        return RGBimage
+
+# Function to convert to grayscale and calculate energy map 
+def calulate_energy(image):
+   
+    gImage = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)   # Convert to grayscale
+ 
+    
+    energy = np.zeros_like(gImage, dtype=np.float32) # Initialize an empty energy map
+
+    
+    rows, cols = gImage.shape  #  energy formula for each pixel 
+
+    for i in range(1, rows - 1):  # Skip first and last row
+        for j in range(1, cols - 1):  # Skip first and last column
+            
+            a = gImage[i - 1, j - 1]  # top-left
+            b = gImage[i - 1, j]      # top
+            c = gImage[i - 1, j + 1]  # top-right
+            d = gImage[i, j - 1]      # left
+            e = gImage[i, j]          # center (E)
+            f = gImage[i, j + 1]      # right
+            g = gImage[i + 1, j - 1]  # bottom-left
+            h = gImage[i + 1, j]      # bottom
+            i_pixel = gImage[i + 1, j + 1]  # bottom-right
+
+            # Calculate the energy in the x and y directions using the given formula
+            xenergy = a + 2 * d + g - c - 2 * f - i_pixel
+            yenergy = a + 2 * b + c - g - 2 * h - i_pixel
+
+            # The total energy 
+            energy[i, j] = abs(xenergy) + abs(yenergy)
+
+    
+    energy = np.uint8(cv2.normalize(energy, None, 0, 255, cv2.NORM_MINMAX))
+
+
+    # Set the edges of the energy map to black
+    energy[0, :] = 0  # Top edge
+    energy[-1, :] = 0  # Bottom edge
+    energy[:, 0] = 0  # Left edge
+    energy[:, -1] = 0  # Right edge
+
+    return energy
+
+# Main Section
+image_name = 'tower.jpg'  
+image = read_image(image_name)
+
+if image is not None:
+ 
+    energy = calulate_energy(image)
+
+ 
+    plt.subplot(1, 2, 1)
+    plt.imshow(image)  # Display original image
+    plt.title('Original Image')
+    plt.axis('off')
+
+    plt.subplot(1, 2, 2)
+    plt.imshow(energy, cmap='gray')  # Display energy map
+    plt.title('Energy Map (Edges Black)')
+    plt.axis('off')
+
+    plt.show()
+
