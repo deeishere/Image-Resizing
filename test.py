@@ -108,10 +108,24 @@ def calulate_energy(image):
 
 # Function to reverse grayscale energy to the original color (attempting to reconstruct)
 def reverse_grayscale_to_rgb(energy, original_image):
-   gg = 255-energy
+   # Assuming energy relates to the grayscale intensity, we reverse the process:
+    # We will map the energy to each channel of the original image.
+    
+    # Get the individual channels from the original image
+    r_channel = original_image[:,:,0]
+    g_channel = original_image[:,:,1]
+    b_channel = original_image[:,:,2]
 
-  
-   return  cv2.cvtColor(gg, cv2.COLOR_RGB2BGR)
+    # Reverse the energy map into color using the channels
+    # Here we simply try to map the energy back as a "colorized" version of the original image
+    reversed_r = np.clip(r_channel + energy, 0, 255)
+    reversed_g = np.clip(g_channel + energy, 0, 255)
+    reversed_b = np.clip(b_channel + energy, 0, 255)
+
+    # Stack the channels back into an RGB image
+    reversed_image = np.stack([reversed_r, reversed_g, reversed_b], axis=-1)
+    return reversed_image.astype(np.uint8)
+
 
 # Main Section
 image_name = 'tower.jpg'  
