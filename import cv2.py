@@ -77,7 +77,7 @@ def find_seams(energy, num_seams):
 
     return seams
 
-# Function to remove multiple seams from the image
+# Function to remove multiple seams from the image 
 def remove_seams(image, seams):
     rows, cols, _ = image.shape
     new_cols = cols - len(seams)  
@@ -86,7 +86,15 @@ def remove_seams(image, seams):
     for row in range(rows):
         keep_pixels = np.ones(cols, dtype=bool)
         for seam in seams:
-            keep_pixels[seam[row]] = False  
+            if seam[row] < cols:  # Ensure seam index is within bounds
+                keep_pixels[seam[row]] = False  
+
+        # Adjust if the number of pixels is mismatched
+        if np.sum(keep_pixels) > new_cols:
+            keep_pixels[np.where(keep_pixels)[0][-1]] = False  # Remove extra pixel if needed
+        elif np.sum(keep_pixels) < new_cols:
+            keep_pixels[np.where(~keep_pixels)[0][0]] = True  # Add a pixel back if needed
+
         reduced_img[row, :, :] = image[row, keep_pixels, :]
 
     return reduced_img
