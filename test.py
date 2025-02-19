@@ -109,23 +109,52 @@ def calulate_energy(image):
 # Function to reverse grayscale energy to the original color (attempting to reconstruct)
 def reverse_grayscale_to_rgb(energy, original_image):
    # Assuming energy relates to the grayscale intensity, we reverse the process:
-    # We will map the energy to each channel of the original image.
-    
-    # Get the individual channels from the original image
+
+
+
+    # Step 1: Smooth the energy map using a Gaussian filter to simulate "reversing" edge-detection
+    smoothed_energy = cv2.GaussianBlur(energy, (5, 5), 0)  # Smooth the energy map
+
+    # Step 2: Normalize the energy to make sure it's in a usable range for image processing
+    smoothed_energy = np.uint8(cv2.normalize(smoothed_energy, None, 0, 255, cv2.NORM_MINMAX))
+
+    # Step 3: Get the individual channels from the original image
     r_channel = original_image[:,:,0]
     g_channel = original_image[:,:,1]
     b_channel = original_image[:,:,2]
 
-    # Reverse the energy map into color using the channels
-    # Here we simply try to map the energy back as a "colorized" version of the original image
+    # Step 4: Use the smoothed energy map to enhance or modify the color channels
+    # We apply a multiplication factor based on the smoothed energy instead of adding directly
+    energy_factor_r = np.clip(1 + smoothed_energy / 255.0, 0, 2)  # Apply scaling based on energy map
+    energy_factor_g = np.clip(1 + smoothed_energy / 255.0, 0, 2)
+    energy_factor_b = np.clip(1 + smoothed_energy / 255.0, 0, 2)
+
+    # Step 5: Modify the original color channels based on the energy factors
+    # Multiply the channels by the energy factors (This enhances edges)
+    enhanced_r = np.clip(r_channel * energy_factor_r, 0, 255)
+    enhanced_g = np.clip(g_channel * energy_factor_g, 0, 255)
+    enhanced_b = np.clip(b_channel * energy_factor_b, 0, 255)
+
+    # Step 6: Combine the adjusted channels back into an RGB image
+    enhanced_image = np.stack([enhanced_r, enhanced_g, enhanced_b], axis=-1)
+
+    return enhanced_image.astype(np.uint8)
+
+def reverse_grayscale_to_rgb(energy, original_image):
+    # to get the RGB color individual 
+    r_channel = original_image[:, :, 0]
+    g_channel = original_image[:, :, 1]
+    b_channel = original_image[:, :, 2]
+    
+    #to restore color
     reversed_r = np.clip(r_channel + energy, 0, 255)
     reversed_g = np.clip(g_channel + energy, 0, 255)
     reversed_b = np.clip(b_channel + energy, 0, 255)
 
-    # Stack the channels back into an RGB image
+
+
     reversed_image = np.stack([reversed_r, reversed_g, reversed_b], axis=-1)
     return reversed_image.astype(np.uint8)
-
 
 # Main Section
 image_name = 'tower.jpg'  
@@ -136,7 +165,7 @@ if image is not None:
     energy = calulate_energy(image)
     ori= reverse_grayscale_to_rgb(energy,image)
 
-    plt.subplot(1, 2, 1)
+    plt.subplot(2, 2, 1)
     plt.imshow(ori)  # Display original image
     plt.title('Original Image')
     plt.axis('off')
