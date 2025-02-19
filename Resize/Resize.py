@@ -75,7 +75,7 @@ def find_seams(energy, num_seams,originalImage):
 
         seams.append(best_seam)
         energy[np.arange(rows), best_seam] = np.max(energy) + 10000  
-    im=reverse_grayscale_to_rgb(energy,originalImage)
+  
     return seams
 
 # Function to remove multiple seams from the image 
@@ -160,7 +160,7 @@ if image is not None:
 
     # Step 5: Final Seam-Carved Image with Restored Colors
     axes[2, 0].imshow(image_seam_carved)
-    axes[2, 0].set_title("5) Final Image (Width Reduced, Colors Restored)")
+    axes[2, 0].set_title("5) Final Image")
     axes[2, 0].axis('off')
 
     # Hide extra empty subplot
