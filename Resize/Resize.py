@@ -113,7 +113,7 @@ def apear_seams(energy, seams):
 
 
 # Main Section
-image_name = 'center.jpg'
+image_name = 'castle.jpg'
 image = read_image(image_name)
 
 if image is not None:
