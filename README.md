@@ -9,6 +9,8 @@ This project explores three different algorithmic approaches to image resizing:
 - Greedy Algorithm –> A faster but heuristic-based method that makes locally optimal choices at each step, often leading to good (but not always optimal) results.
 By comparing these techniques, this project aims to analyze their efficiency, accuracy, and suitability for different scenarios. The implementation includes performance benchmarking and visual comparisons of the resized images.
 
+*change branches to know the three different algorithmis*
+
 #Brute Force
 ![image](https://github.com/user-attachments/assets/51df6883-9aff-4e4e-98d2-8b8209df02a5)
 
