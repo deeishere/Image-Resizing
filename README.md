@@ -11,7 +11,7 @@ By comparing these techniques, this project aims to analyze their efficiency, ac
 
 *change branches to know the three different algorithmis*
 
-#Brute Force
+## Brute Force
 ![image](https://github.com/user-attachments/assets/51df6883-9aff-4e4e-98d2-8b8209df02a5)
 
 
