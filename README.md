@@ -1,4 +1,5 @@
-#AlgorithmPro
+# AlgorithmPro
+
 Image resizing is a fundamental operation in computer vision, graphics processing, and web development. Traditional resizing methods such as scaling and cropping often lead to quality loss or unbalanced aspect ratios. To address this, more intelligent algorithms can be used to preserve important image content while adjusting dimensions.
 
 This project explores three different algorithmic approaches to image resizing:
