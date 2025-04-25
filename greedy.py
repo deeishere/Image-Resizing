@@ -117,7 +117,7 @@ def apear_seams(energy, seams):
 
 
 # Main Section
-image_name = 'tower.jpg'
+image_name = 'tower.jpg' # image name 
 image = read_image(image_name)
 
 if image is not None:
