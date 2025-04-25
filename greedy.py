@@ -1,8 +1,10 @@
+
+import cv2
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Read image from file
+# Function to read an image
 def read_image(image_name):
     image = cv2.imread(image_name)
     if image is None:
@@ -10,7 +12,7 @@ def read_image(image_name):
         return None
     return cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
-# Calculate energy map (simple gradient-based)
+# Function to convert to grayscale and calculate energy map
 def calculate_energy(image):
     gImage = 0.2989 * image[:, :, 2] + 0.5870 * image[:, :, 1] + 0.1140 * image[:, :, 0]
     energy = np.zeros_like(gImage, dtype=np.float32)
@@ -18,15 +20,15 @@ def calculate_energy(image):
     rows, cols = gImage.shape  
     for i in range(1, rows - 1):  
         for j in range(1, cols - 1):
-            a = gImage[i - 1, j - 1]
-            b = gImage[i - 1, j]
-            c = gImage[i - 1, j + 1]
-            d = gImage[i, j - 1]
-            e = gImage[i, j]
-            f = gImage[i, j + 1]
-            g = gImage[i + 1, j - 1]
-            h = gImage[i + 1, j]
-            i_pixel = gImage[i + 1, j + 1]
+            a = gImage[i - 1, j - 1]  
+            b = gImage[i - 1, j]      
+            c = gImage[i - 1, j + 1]  
+            d = gImage[i, j - 1]      
+            e = gImage[i, j]          
+            f = gImage[i, j + 1]      
+            g = gImage[i + 1, j - 1]  
+            h = gImage[i + 1, j]      
+            i_pixel = gImage[i + 1, j + 1]  
 
             xenergy = a + 2 * d + g - c - 2 * f - i_pixel
             yenergy = a + 2 * b + c - g - 2 * h - i_pixel
@@ -34,14 +36,19 @@ def calculate_energy(image):
             energy[i, j] = np.sqrt(xenergy**2 + yenergy**2)
 
     energy = np.uint8(cv2.normalize(energy, None, 0, 255, cv2.NORM_MINMAX))
-    energy[0, :] = 0
-    energy[-1, :] = 0
-    energy[:, 0] = 0
-    energy[:, -1] = 0
+
+    # Set edges to 0
+    energy[0, :] = 0    
+    energy[-1, :] = 0   
+    energy[:, 0] = 0    
+    energy[:, -1] = 0   
 
     return energy.astype(np.float32)
 
-def find_greedy_seams(energy, num_seams):
+# Function to find multiple seams with the lowest energy (brute force)
+import numpy as np
+
+def find_seams(energy, num_seams):
     rows, cols = energy.shape
     seams = []
     energy_copy = energy.copy()
@@ -75,31 +82,15 @@ def find_greedy_seams(energy, num_seams):
     return seams
 
 
-def remove_multiple_seams(image, seams):
-    rows, cols, _ = image.shape
-    num_seams = len(seams)
-    new_cols = cols - num_seams
-    output = np.zeros((rows, new_cols, 3), dtype=np.uint8)
 
-    # Create a boolean mask of pixels to keep
-    mask = np.ones((rows, cols), dtype=bool)
-
+# Function to remove multiple seams from the image 
+def remove_seams(image, seams):
     for seam in seams:
-        for row in range(rows):
-            col = seam[row]
-            # Find the next available pixel to remove if duplicate
-            while not mask[row, col]:
-                col += 1
-                if col >= cols:
-                    col = seam[row] - 1
-                    while not mask[row, col]:
-                        col -= 1
-            mask[row, col] = False
-
-    for row in range(rows):
-        output[row] = image[row][mask[row]]
-
-    return output
+        mask = np.ones(image.shape[:2], dtype=bool)
+        for row in range(image.shape[0]):
+            mask[row, seam[row]] = False
+        image = image[mask].reshape((image.shape[0], image.shape[1] - 1, image.shape[2]))
+    return image
 
 
 # Function to visualize multiple seams in red on the energy map
@@ -110,47 +101,62 @@ def apear_seams(energy, seams):
             seam_visualized[row, seam[row]] = [255, 0, 0]  
     return seam_visualized
 
-# === Main ===
-image_name = 'tower.jpg'  
+
+
+
+# Main Section
+image_name = 'dancers.jpg'
 image = read_image(image_name)
 
 if image is not None:
-    num_seams_to_remove = 50
+    num_seams_to_remove = 50  
 
-    # Step 1: Energy map
+    # Step 1: Compute initial energy map
     energy = calculate_energy(image)
 
-    # Step 2: Greedy seam finding
-    seams = find_greedy_seams(energy.copy(), num_seams_to_remove)
+    # Step 2: Find and visualize multiple seams
+    seams = find_seams(energy.copy(), num_seams_to_remove)
     energy_with_seams = apear_seams(energy.copy(), seams)
 
-    # Step 3: Remove the seams
-    carved_image = remove_multiple_seams(image.copy(), seams)
-    energy_after = calculate_energy(carved_image)
+    # Step 3: Remove seams
+    image_seam_carved = remove_seams(image.copy(), seams)
 
-    # Step 4: Display results
-    fig, axes = plt.subplots(3, 2, figsize=(12, 12))
+    # Step 4: Restore original colors to resized image
+    
+
+    # Compute energy map after seam removal
+    energy_after_remove = calculate_energy(image_seam_carved)
+
+    # Display the steps
+    fig, axes = plt.subplots(3, 2, figsize=(10, 12))
+
+    # Step 1: Original Image
     axes[0, 0].imshow(image)
-    axes[0, 0].set_title("Original Image")
-    axes[0, 0].axis("off")
+    axes[0, 0].set_title("1) Start with an image")
+    axes[0, 0].axis('off')
 
+    # Step 2: Energy Map
     axes[0, 1].imshow(energy, cmap='gray')
-    axes[0, 1].set_title("Energy Map")
-    axes[0, 1].axis("off")
+    axes[0, 1].set_title("2) Compute the energy value for each pixel")
+    axes[0, 1].axis('off')
 
+    # Step 3: Visualization of multiple red seams on grayscale
     axes[1, 0].imshow(energy_with_seams)
-    axes[1, 0].set_title("Seams (Red)")
-    axes[1, 0].axis("off")
+    axes[1, 0].set_title("3) show seams")
+    axes[1, 0].axis('off')
 
-    axes[1, 1].imshow(energy_after, cmap='gray')
-    axes[1, 1].set_title("Energy After Seam Removal")
-    axes[1, 1].axis("off")
+    # Step 4: Energy Map After Seam Removal
+    axes[1, 1].imshow(energy_after_remove, cmap='gray')
+    axes[1, 1].set_title("4) Remove seams")
+    axes[1, 1].axis('off')
 
-    axes[2, 0].imshow(carved_image)
-    axes[2, 0].set_title("Final Carved Image")
-    axes[2, 0].axis("off")
+    # Step 5: Final Seam-Carved Image with Restored Colors
+    axes[2, 0].imshow(image_seam_carved)
+    axes[2, 0].set_title("5) Final Image")
+    axes[2, 0].axis('off')
 
-    axes[2, 1].axis("off")
+    # Hide extra empty subplot
+    axes[2, 1].axis('off')
 
     plt.tight_layout()
     plt.show()
