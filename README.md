@@ -1,4 +1,4 @@
-# AlgorithmPro
+# Image Reduction 
 
 Image resizing is a fundamental operation in computer vision, graphics processing, and web development. Traditional resizing methods such as scaling and cropping often lead to quality loss or unbalanced aspect ratios. To address this, more intelligent algorithms can be used to preserve important image content while adjusting dimensions.
 
@@ -17,12 +17,11 @@ By comparing these techniques, this project aims to analyze their efficiency, ac
 ![IMG_1726](https://github.com/user-attachments/assets/85c2eb54-1e93-42ac-aade-2d62da0beb9c)
 
 
- 
-| @ |  Best Case   |   Worst Case  |
-| ------------- | ------------- | ------------- |
-|Complexity|     O(n*m)    |     O(n*m)    |
-|Explanation|The algorithm still checks all of the possible seams, as every seam must be evaluated, and it energy calculated, therefore the time complexity remains O(rows × cols). | The algorithm evaluates every possible starting column for each seam and processes all rows, resulting in O(rows × cols) complexity regardless of the number of seams removed because it’s constant (50). |
-|Example|(Image with uniform energy) |(Full Image Search) |
+| Case        | Complexity | Explanation                                                                                                                                                                                                                   | Example                  |
+|-------------|------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------|
+| Best Case   | O(n\*m)     | The algorithm still checks all possible seams, as every seam must be evaluated and its energy calculated. Therefore, the time complexity remains O(rows × cols).                                                           | Image with uniform energy |
+| Worst Case  | O(n\*m)     | The algorithm evaluates every possible starting column for each seam and processes all rows, resulting in O(rows × cols) complexity regardless of the number of seams removed (constant, e.g., 50).                        | Full image search         |
+
 
 
 ## Dynamic Approach 
