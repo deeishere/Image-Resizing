@@ -11,10 +11,11 @@ This project explores three different algorithmic approaches to image resizing:
   
 By comparing these techniques, this project aims to analyze their efficiency, accuracy, and suitability for different scenarios. The implementation includes performance benchmarking and visual comparisons of the resized images.
 
-*change branches to know the three different algorithmis*
+*number of seams=50.
 
 ## Brute Force Approach 
-![image](https://github.com/user-attachments/assets/51df6883-9aff-4e4e-98d2-8b8209df02a5)
+![IMG_1726](https://github.com/user-attachments/assets/85c2eb54-1e93-42ac-aade-2d62da0beb9c)
+
 
  
 | @ |  Best Case   |   Worst Case  |
@@ -25,6 +26,8 @@ By comparing these techniques, this project aims to analyze their efficiency, ac
 
 
 ## Dynamic Approach 
+![IMG_7738](https://github.com/user-attachments/assets/d706c39f-f123-4279-a379-cae6b42b6f21)
+
 
 | Case        | Complexity | Explanation                                                                                                                                                                                                                 | Example                                    |
 |-------------|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------|
@@ -32,6 +35,8 @@ By comparing these techniques, this project aims to analyze their efficiency, ac
 | Worst Case  | O(n\*m)     | The algorithm processes the full matrix, regardless of the structure of the energy map or the seam configuration. The number of operations is determined by the size of the image and the number of seams to be removed. | Highly varied energy distribution in image |
 
 ## Greedy Approach 
+![IMG_6563](https://github.com/user-attachments/assets/1be0dbea-65fc-40da-9ad0-4cbbfa1b684c)
+
 
 | Case        | Complexity | Explanation                                                                                                                                                                                                                 |
 |-------------|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -39,5 +44,9 @@ By comparing these techniques, this project aims to analyze their efficiency, ac
 | Worst Case  | O(n)       | The algorithm processes the image as each seam requires a linear scan through all the rows to select the optimal path. The process is independent of the image width (cols), and each row requires constant-time operations for k seams in O(rows) time.              |
 
 
-
+-----
+**To wrap it up**
+- **Greedy**: Fast but not optimal. It makes locally optimal choices at each step, which can lead to suboptimal global results.
+- **Dynamic Programming**: Fast and optimal. It efficiently computes the globally optimal seam using a cumulative energy approach.
+- **Brute Force**: Slow but optimal. It guarantees the best result by exploring all possible seams, but it's computationally expensive.
 
