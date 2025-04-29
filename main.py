@@ -131,8 +131,8 @@ def remove_seams_greedy(image, seams):
     return image
 
 # Menu
-image_files = ["castle.jpg", "tower.jpg", "cartoon.jpg", "carving.jpg", "center.jpg",
-               "dancers.jpg", "fenster.jpg", "grave.jpg", "museum.jpg", "square.jpg"]
+image_files = ["images/castle.jpg", "images/tower.jpg", "images/cartoon.jpg", "images/carving.jpg", "images/center.jpg",
+               "images/dancers.jpg", "images/fenster.jpg", "images/grave.jpg", "images/museum.jpg", "images/square.jpg"]
 
 algorithms = {
     1: (find_seams_brute_force, remove_seams_Brute_DP, "Brute-force"),
