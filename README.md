@@ -11,8 +11,8 @@ This project explores three different algorithmic approaches to image resizing:
   
 By comparing these techniques, this project aims to analyze their efficiency, accuracy, and suitability for different scenarios. The implementation includes performance benchmarking and visual comparisons of the resized images.
 
-*number of seams=50.
-------
+number of seams=50
+----------
 ## Brute Force Approach 
 ![IMG_1726](https://github.com/user-attachments/assets/85c2eb54-1e93-42ac-aade-2d62da0beb9c)
 
